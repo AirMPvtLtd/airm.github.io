@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduSwarm Auto (Free Edition)</title>
+    <title>NEPConnect - Your NEP-Aligned Learning Platform</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f5f7fa; color: #333; line-height: 1.6; }
         .header { text-align: center; background: linear-gradient(135deg, #007bff, #00b4ff); color: white; padding: 25px 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
@@ -100,24 +100,46 @@
         .difficulty-easy { background: #d4edda; color: #155724; }
         .difficulty-medium { background: #fff3cd; color: #856404; }
         .difficulty-hard { background: #f8d7da; color: #721c24; }
+        .language-selector {
+            position: absolute; top: 20px; right: 20px; z-index: 100;
+        }
         @media (max-width: 768px) {
             .container { padding: 0 15px; }
             .section { padding: 20px; }
+            .language-selector { position: static; margin-bottom: 15px; }
         }
     </style>
 </head>
 <body>
+    <div class="language-selector">
+        <select id="languageSelect" onchange="changeLanguage()">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="bn">বাংলা</option>
+            <option value="ta">தமிழ்</option>
+            <option value="te">తెలుగు</option>
+            <option value="mr">मराठी</option>
+            <option value="gu">ગુજરાતી</option>
+            <option value="kn">ಕನ್ನಡ</option>
+            <option value="ml">മലയാളം</option>
+            <option value="pa">ਪੰਜਾਬੀ</option>
+            <option value="or">ଓଡ଼ିଆ</option>
+            <option value="as">অসমীয়া</option>
+            <option value="ur">اردو</option>
+        </select>
+    </div>
+
     <div class="header">
-        <h1>EduSwarm Auto (Free Edition)</h1>
-        <h3>Your Personalized IIT Preparation Platform</h3>
+        <h1 id="appTitle">NEPConnect</h1>
+        <h3 id="appSubtitle">Your NEP-Aligned Learning Platform</h3>
     </div>
 
     <div class="container">
         <div class="section">
-            <h2>Step 1: Setup Your Academic Profile</h2>
-            <p class="instructions">Complete your profile to get lessons perfectly tailored to your current level and IIT goals.</p>
+            <h2 id="step1Title">Step 1: Setup Your Academic Profile</h2>
+            <p class="instructions" id="step1Instructions">Complete your profile to get lessons perfectly tailored to your current level and goals.</p>
             
-            <label for="currentClass">Current Class:</label>
+            <label for="currentClass" id="currentClassLabel">Current Class:</label>
             <select id="currentClass">
                 <option value="6">Class 6</option>
                 <option value="7">Class 7</option>
@@ -128,16 +150,16 @@
                 <option value="12">Class 12</option>
             </select>
             
-            <label for="currentMarks">Current Average Marks (0-100):</label>
+            <label for="currentMarks" id="currentMarksLabel">Current Average Marks (0-100):</label>
             <input type="number" id="currentMarks" placeholder="e.g., 75" value="75" min="0" max="100">
             
-            <label for="strengths">Your Strong Subjects (comma separated):</label>
+            <label for="strengths" id="strengthsLabel">Your Strong Subjects (comma separated):</label>
             <input type="text" id="strengths" placeholder="e.g., Maths, Chemistry" value="Maths, Chemistry">
             
-            <label for="weaknesses">Your Weak Subjects (comma separated):</label>
+            <label for="weaknesses" id="weaknessesLabel">Your Weak Subjects (comma separated):</label>
             <input type="text" id="weaknesses" placeholder="e.g., Physics, Biology" value="Physics, Biology">
             
-            <label for="learningStyle">Preferred Learning Style:</label>
+            <label for="learningStyle" id="learningStyleLabel">Preferred Learning Style:</label>
             <select id="learningStyle">
                 <option value="visual" selected>Visual Learner (Diagrams, Charts)</option>
                 <option value="auditory">Auditory Learner (Explanations, Discussions)</option>
@@ -145,18 +167,18 @@
                 <option value="readwrite">Reading/Writing Learner (Textbooks, Notes)</option>
             </select>
             
-            <label for="interests">Your Interests (comma separated):</label>
+            <label for="interests" id="interestsLabel">Your Interests (comma separated):</label>
             <input type="text" id="interests" placeholder="e.g., Drones, Robotics, Space" value="Drones, Robotics, Space">
             
-            <label for="goal">IIT Preparation Goal:</label>
+            <label for="goal" id="goalLabel">Preparation Goal:</label>
             <select id="goal">
-                <option value="no">No IIT Goal</option>
-                <option value="basic">Basic IIT Foundation</option>
-                <option value="serious" selected>Serious IIT Preparation</option>
-                <option value="advanced">Advanced JEE Preparation</option>
+                <option value="no">No Specific Goal</option>
+                <option value="basic">Basic Foundation</option>
+                <option value="serious" selected>Serious Preparation</option>
+                <option value="advanced">Advanced Preparation</option>
             </select>
             
-            <label for="studyTime">Daily Study Time Available:</label>
+            <label for="studyTime" id="studyTimeLabel">Daily Study Time Available:</label>
             <select id="studyTime">
                 <option value="1">1 hour</option>
                 <option value="2">2 hours</option>
@@ -165,7 +187,7 @@
                 <option value="5+">5+ hours</option>
             </select>
             
-            <button onclick="saveProfile()">Save & Analyze Profile</button>
+            <button onclick="saveProfile()" id="saveProfileBtn">Save & Analyze Profile</button>
             
             <div id="profileAnalysis" class="output-box" style="display: none; margin-top: 20px;">
                 <!-- Profile analysis will appear here -->
@@ -173,10 +195,10 @@
         </div>
 
         <div class="section">
-            <h2>Step 2: Select Learning Topic</h2>
-            <p class="instructions">Choose a topic from your syllabus or explore advanced concepts. We'll adapt it to your level.</p>
+            <h2 id="step2Title">Step 2: Select Learning Topic</h2>
+            <p class="instructions" id="step2Instructions">Choose a topic from your syllabus or explore advanced concepts. We'll adapt it to your level.</p>
             
-            <label for="subjectSelect">Subject:</label>
+            <label for="subjectSelect" id="subjectSelectLabel">Subject:</label>
             <select id="subjectSelect">
                 <option value="Physics">Physics</option>
                 <option value="Chemistry">Chemistry</option>
@@ -184,53 +206,53 @@
                 <option value="Biology">Biology</option>
             </select>
             
-            <label for="topicInput">Topic Name:</label>
+            <label for="topicInput" id="topicInputLabel">Topic Name:</label>
             <input type="text" id="topicInput" placeholder="e.g., Motion, Thermodynamics, Algebra" value="Motion">
             
-            <label for="topicDepth">Depth Level:</label>
+            <label for="topicDepth" id="topicDepthLabel">Depth Level:</label>
             <select id="topicDepth">
                 <option value="basic">Basic Understanding</option>
                 <option value="intermediate" selected>Intermediate Level</option>
                 <option value="advanced">Advanced Concepts</option>
-                <option value="iit">IIT/JEE Level</option>
+                <option value="iit">Competitive Level</option>
             </select>
             
-            <button onclick="generateFullLesson()">Generate Comprehensive Lesson</button>
+            <button onclick="generateFullLesson()" id="generateLessonBtn">Generate Comprehensive Lesson</button>
         </div>
 
         <div class="section">
-            <h2>Step 3: Your Personalized Learning Experience</h2>
-            <p class="instructions">Your complete lesson package will appear here with theory, examples, practice, and simulations.</p>
+            <h2 id="step3Title">Step 3: Your Personalized Learning Experience</h2>
+            <p class="instructions" id="step3Instructions">Your complete lesson package will appear here with theory, examples, practice, and simulations.</p>
             
             <div class="tabs">
-                <div class="tab active" onclick="switchTab('theory')">Theory</div>
-                <div class="tab" onclick="switchTab('examples')">Examples</div>
-                <div class="tab" onclick="switchTab('practice')">Practice</div>
-                <div class="tab" onclick="switchTab('iit')">IIT Prep</div>
-                <div class="tab" onclick="switchTab('simulation')">Simulation</div>
+                <div class="tab active" onclick="switchTab('theory')" id="theoryTab">Theory</div>
+                <div class="tab" onclick="switchTab('examples')" id="examplesTab">Examples</div>
+                <div class="tab" onclick="switchTab('practice')" id="practiceTab">Practice</div>
+                <div class="tab" onclick="switchTab('iit')" id="iitTab">Exam Prep</div>
+                <div class="tab" onclick="switchTab('simulation')" id="simulationTab">Simulation</div>
             </div>
             
             <div id="lessonOutput" class="output-box">
                 <div id="theory" class="tab-content active">
-                    <p>Your personalized theory lesson will appear here after generation.</p>
+                    <p id="theoryPlaceholder">Your personalized theory lesson will appear here after generation.</p>
                 </div>
                 <div id="examples" class="tab-content">
-                    <p>Practical examples tailored to your level will appear here.</p>
+                    <p id="examplesPlaceholder">Practical examples tailored to your level will appear here.</p>
                 </div>
                 <div id="practice" class="tab-content">
-                    <p>Practice problems matching your current ability will appear here.</p>
+                    <p id="practicePlaceholder">Practice problems matching your current ability will appear here.</p>
                 </div>
                 <div id="iit" class="tab-content">
-                    <p>IIT/JEE preparation material will appear here if relevant.</p>
+                    <p id="iitPlaceholder">Exam preparation material will appear here if relevant.</p>
                 </div>
                 <div id="simulation" class="tab-content">
-                    <p>Interactive simulations will appear here.</p>
+                    <p id="simulationPlaceholder">Interactive simulations will appear here.</p>
                     <img src="https://cdn-icons-png.flaticon.com/512/3038/3038102.png" id="drone" class="drone-animation" alt="Drone">
                 </div>
             </div>
             
             <div id="learningProgress" style="display: none; margin-top: 20px;">
-                <h3>Your Learning Progress</h3>
+                <h3 id="progressTitle">Your Learning Progress</h3>
                 <div class="progress-container">
                     <div id="progressBar" class="progress-bar" style="width: 0%">0%</div>
                 </div>
@@ -240,6 +262,254 @@
     </div>
 
     <script>
+        // Language translations
+        const translations = {
+            en: {
+                appTitle: "NEPConnect",
+                appSubtitle: "Your NEP-Aligned Learning Platform",
+                step1Title: "Step 1: Setup Your Academic Profile",
+                step1Instructions: "Complete your profile to get lessons perfectly tailored to your current level and goals.",
+                currentClassLabel: "Current Class:",
+                currentMarksLabel: "Current Average Marks (0-100):",
+                strengthsLabel: "Your Strong Subjects (comma separated):",
+                weaknessesLabel: "Your Weak Subjects (comma separated):",
+                learningStyleLabel: "Preferred Learning Style:",
+                interestsLabel: "Your Interests (comma separated):",
+                goalLabel: "Preparation Goal:",
+                studyTimeLabel: "Daily Study Time Available:",
+                saveProfileBtn: "Save & Analyze Profile",
+                step2Title: "Step 2: Select Learning Topic",
+                step2Instructions: "Choose a topic from your syllabus or explore advanced concepts. We'll adapt it to your level.",
+                subjectSelectLabel: "Subject:",
+                topicInputLabel: "Topic Name:",
+                topicDepthLabel: "Depth Level:",
+                generateLessonBtn: "Generate Comprehensive Lesson",
+                step3Title: "Step 3: Your Personalized Learning Experience",
+                step3Instructions: "Your complete lesson package will appear here with theory, examples, practice, and simulations.",
+                theoryTab: "Theory",
+                examplesTab: "Examples",
+                practiceTab: "Practice",
+                iitTab: "Exam Prep",
+                simulationTab: "Simulation",
+                theoryPlaceholder: "Your personalized theory lesson will appear here after generation.",
+                examplesPlaceholder: "Practical examples tailored to your level will appear here.",
+                practicePlaceholder: "Practice problems matching your current ability will appear here.",
+                iitPlaceholder: "Exam preparation material will appear here if relevant.",
+                simulationPlaceholder: "Interactive simulations will appear here.",
+                progressTitle: "Your Learning Progress"
+            },
+            hi: {
+                appTitle: "एनईपीकनेक्ट",
+                appSubtitle: "राष्ट्रीय शिक्षा नीति अनुरूप आपका शिक्षण मंच",
+                step1Title: "चरण 1: अपनी शैक्षणिक प्रोफ़ाइल सेट करें",
+                step1Instructions: "अपनी वर्तमान स्तर और लक्ष्यों के अनुरूप पाठ प्राप्त करने के लिए अपनी प्रोफ़ाइल पूरी करें।",
+                currentClassLabel: "वर्तमान कक्षा:",
+                currentMarksLabel: "वर्तमान औसत अंक (0-100):",
+                strengthsLabel: "आपके मजबूत विषय (अल्पविराम से अलग):",
+                weaknessesLabel: "आपके कमजोर विषय (अल्पविराम से अलग):",
+                learningStyleLabel: "पसंदीदा सीखने की शैली:",
+                interestsLabel: "आपकी रुचियाँ (अल्पविराम से अलग):",
+                goalLabel: "तैयारी का लक्ष्य:",
+                studyTimeLabel: "प्रतिदिन अध्ययन समय उपलब्ध:",
+                saveProfileBtn: "सहेजें और प्रोफ़ाइल विश्लेषण करें",
+                step2Title: "चरण 2: शिक्षण विषय चुनें",
+                step2Instructions: "अपने पाठ्यक्रम से एक विषय चुनें या उन्नत अवधारणाओं का अन्वेषण करें। हम इसे आपके स्तर के अनुकूल बनाएंगे।",
+                subjectSelectLabel: "विषय:",
+                topicInputLabel: "विषय का नाम:",
+                topicDepthLabel: "गहराई स्तर:",
+                generateLessonBtn: "व्यापक पाठ उत्पन्न करें",
+                step3Title: "चरण 3: आपका व्यक्तिगत शिक्षण अनुभव",
+                step3Instructions: "आपका संपूर्ण पाठ पैकेज यहां सिद्धांत, उदाहरण, अभ्यास और सिमुलेशन के साथ प्रदर्शित होगा।",
+                theoryTab: "सिद्धांत",
+                examplesTab: "उदाहरण",
+                practiceTab: "अभ्यास",
+                iitTab: "परीक्षा तैयारी",
+                simulationTab: "सिमुलेशन",
+                theoryPlaceholder: "आपका व्यक्तिगत सिद्धांत पाठ जनरेशन के बाद यहां दिखाई देगा।",
+                examplesPlaceholder: "आपके स्तर के अनुरूप व्यावहारिक उदाहरण यहां दिखाई देंगे।",
+                practicePlaceholder: "आपकी वर्तमान क्षमता से मेल खाने वाली अभ्यास समस्याएं यहां दिखाई देंगी।",
+                iitPlaceholder: "यदि प्रासंगिक हो तो परीक्षा तैयारी सामग्री यहां दिखाई देगी।",
+                simulationPlaceholder: "इंटरैक्टिव सिमुलेशन यहां दिखाई देंगे।",
+                progressTitle: "आपकी सीखने की प्रगति"
+            },
+            // Other languages would follow the same pattern
+            bn: {
+                appTitle: "এনইপিকানেক্ট",
+                appSubtitle: "আপনার এনইপি-সারিবদ্ধ শিক্ষার প্ল্যাটফর্ম",
+                step1Title: "ধাপ 1: আপনার একাডেমিক প্রোফাইল সেট আপ করুন",
+                step1Instructions: "আপনার বর্তমান স্তর এবং লক্ষ্যগুলির সাথে পুরোপুরি মানানসই পাঠ পেতে আপনার প্রোফাইলটি সম্পূর্ণ করুন।",
+                currentClassLabel: "বর্তমান শ্রেণী:",
+                currentMarksLabel: "বর্তমান গড় নম্বর (0-100):",
+                strengthsLabel: "আপনার শক্তিশালী বিষয়গুলি (কমা দ্বারা পৃথক):",
+                weaknessesLabel: "আপনার দুর্বল বিষয়গুলি (কমা দ্বারা পৃথক):",
+                learningStyleLabel: "পছন্দের শেখার শৈলী:",
+                interestsLabel: "আপনার আগ্রহগুলি (কমা দ্বারা পৃথক):",
+                goalLabel: "প্রস্তুতির লক্ষ্য:",
+                studyTimeLabel: "প্রতিদিন অধ্যয়নের সময় উপলব্ধ:",
+                saveProfileBtn: "সংরক্ষণ করুন এবং প্রোফাইল বিশ্লেষণ করুন",
+                step2Title: "ধাপ 2: শেখার বিষয় নির্বাচন করুন",
+                step2Instructions: "আপনার সিলেবাস থেকে একটি বিষয় চয়ন করুন বা উন্নত ধারণাগুলি অন্বেষণ করুন। আমরা এটিকে আপনার স্তরের সাথে মানিয়ে নেব।",
+                subjectSelectLabel: "বিষয়:",
+                topicInputLabel: "বিষয়ের নাম:",
+                topicDepthLabel: "গভীরতা স্তর:",
+                generateLessonBtn: "সম্পূর্ণ পাঠ তৈরি করুন",
+                step3Title: "ধাপ 3: আপনার ব্যক্তিগতকৃত শেখার অভিজ্ঞতা",
+                step3Instructions: "আপনার সম্পূর্ণ পাঠ প্যাকেজ এখানে তত্ত্ব, উদাহরণ, অনুশীলন এবং সিমুলেশন সহ প্রদর্শিত হবে।",
+                theoryTab: "তত্ত্ব",
+                examplesTab: "উদাহরণ",
+                practiceTab: "অনুশীলন",
+                iitTab: "পরীক্ষার প্রস্তুতি",
+                simulationTab: "সিমুলেশন",
+                theoryPlaceholder: "আপনার ব্যক্তিগতকৃত তত্ত্ব পাঠ তৈরি হওয়ার পরে এখানে প্রদর্শিত হবে।",
+                examplesPlaceholder: "আপনার স্তরের সাথে মানানসই ব্যবহারিক উদাহরণ এখানে প্রদর্শিত হবে।",
+                practicePlaceholder: "আপনার বর্তমান ক্ষমতার সাথে মিলে যাওয়া অনুশীলন সমস্যাগুলি এখানে প্রদর্শিত হবে।",
+                iitPlaceholder: "প্রাসঙ্গিক হলে পরীক্ষার প্রস্তুতি সামগ্রী এখানে প্রদর্শিত হবে।",
+                simulationPlaceholder: "ইন্টারেক্টিভ সিমুলেশন এখানে প্রদর্শিত হবে।",
+                progressTitle: "আপনার শেখার অগ্রগতি"
+            },
+            ta: {
+                appTitle: "என்இபிகனெக்ட்",
+                appSubtitle: "உங்கள் என்இபி-சீரமைக்கப்பட்ட கற்றல் தளம்",
+                step1Title: "படி 1: உங்கள் கல்வி சுயவிவரத்தை அமைக்கவும்",
+                step1Instructions: "உங்கள் தற்போதைய நிலை மற்றும் இலக்குகளுக்கு ஏற்றவாறு பாடங்களைப் பெற உங்கள் சுயவிவரத்தை முடிக்கவும்.",
+                currentClassLabel: "தற்போதைய வகுப்பு:",
+                currentMarksLabel: "தற்போதைய சராசரி மதிப்பெண்கள் (0-100):",
+                strengthsLabel: "உங்கள் வலுவான பாடங்கள் (கமாவால் பிரிக்கப்பட்ட):",
+                weaknessesLabel: "உங்கள் பலவீனமான பாடங்கள் (கமாவால் பிரிக்கப்பட்ட):",
+                learningStyleLabel: "விருப்பமான கற்றல் பாணி:",
+                interestsLabel: "உங்கள் ஆர்வங்கள் (கமாவால் பிரிக்கப்பட்ட):",
+                goalLabel: "தயாரிப்பு இலக்கு:",
+                studyTimeLabel: "தினசரி படிப்பு நேரம் கிடைக்கும்:",
+                saveProfileBtn: "சேமி மற்றும் சுயவிவரத்தை பகுப்பாய்வு செய்யவும்",
+                step2Title: "படி 2: கற்றல் தலைப்பைத் தேர்ந்தெடுக்கவும்",
+                step2Instructions: "உங்கள் பாடத்திட்டத்திலிருந்து ஒரு தலைப்பைத் தேர்ந்தெடுக்கவும் அல்லது மேம்பட்ட கருத்துக்களை ஆராயவும். நாங்கள் அதை உங்கள் நிலைக்கு ஏற்ப சரிசெய்வோம்.",
+                subjectSelectLabel: "பாடம்:",
+                topicInputLabel: "தலைப்பு பெயர்:",
+                topicDepthLabel: "ஆழம் நிலை:",
+                generateLessonBtn: "விரிவான பாடத்தை உருவாக்கவும்",
+                step3Title: "படி 3: உங்கள் தனிப்பயனாக்கப்பட்ட கற்றல் அனுபவம்",
+                step3Instructions: "உங்கள் முழு பாடத் தொகுப்பு கோட்பாடு, எடுத்துக்காட்டுகள், பயிற்சி மற்றும் உருவகப்படுத்துதல்களுடன் இங்கே காண்பிக்கப்படும்.",
+                theoryTab: "கோட்பாடு",
+                examplesTab: "எடுத்துக்காட்டுகள்",
+                practiceTab: "பயிற்சி",
+                iitTab: "தேர்வு தயாரிப்பு",
+                simulationTab: "உருவகப்படுத்துதல்",
+                theoryPlaceholder: "உங்கள் தனிப்பயனாக்கப்பட்ட கோட்பாடு பாடம் உருவாக்கப்பட்ட பிறகு இங்கே காண்பிக்கப்படும்.",
+                examplesPlaceholder: "உங்கள் நிலைக்கு ஏற்றவாறு நடைமுறை எடுத்துக்காட்டுகள் இங்கே காண்பிக்கப்படும்.",
+                practicePlaceholder: "உங்கள் தற்போதைய திறனுக்கு ஏற்ற பயிற்சி சிக்கல்கள் இங்கே காண்பிக்கப்படும்.",
+                iitPlaceholder: "தொடர்புடையதாக இருந்தால் தேர்வு தயாரிப்பு பொருள் இங்கே காண்பிக்கப்படும்.",
+                simulationPlaceholder: "உரையாடல் உருவகப்படுத்துதல்கள் இங்கே காண்பிக்கப்படும்.",
+                progressTitle: "உங்கள் கற்றல் முன்னேற்றம்"
+            },
+            // Other Indian languages would follow the same pattern
+            te: {
+                appTitle: "ఎన్ఇపీకనెక్ట్",
+                appSubtitle: "మీ ఎన్ఇపీ-సమలేఖన తరగతి వేదిక",
+                step1Title: "దశ 1: మీ విద్యాపరమైన ప్రొఫైల్ సెటప్ చేయండి",
+                step1Instructions: "మీ ప్రస్తుత స్థాయి మరియు లక్ష్యాలకు సరిగ్గా అనుగుణంగా పాఠాలను పొందడానికి మీ ప్రొఫైల్ను పూర్తి చేయండి.",
+                currentClassLabel: "ప్రస్తుత తరగతి:",
+                currentMarksLabel: "ప్రస్తుత సగటు మార్కులు (0-100):",
+                strengthsLabel: "మీ బలమైన విషయాలు (కామాతో వేరు చేయబడినవి):",
+                weaknessesLabel: "మీ బలహీనమైన విషయాలు (కామాతో వేరు చేయబడినవి):",
+                learningStyleLabel: "ఇష్టమైన నేర్చుకునే శైలి:",
+                interestsLabel: "మీ ఆసక్తులు (కామాతో వేరు చేయబడినవి):",
+                goalLabel: "తయారీ లక్ష్యం:",
+                studyTimeLabel: "రోజువారీ అధ్యయన సమయం అందుబాటులో ఉంది:",
+                saveProfileBtn: "సేవ్ చేసి ప్రొఫైల్ విశ్లేషించండి",
+                step2Title: "దశ 2: నేర్చుకునే అంశాన్ని ఎంచుకోండి",
+                step2Instructions: "మీ సిలబస్ నుండి ఒక అంశాన్ని ఎంచుకోండి లేదా అధునాతన భావనలను అన్వేషించండి. మేము దానిని మీ స్థాయికి అనుగుణంగా సర్దుబాటు చేస్తాము.",
+                subjectSelectLabel: "విషయం:",
+                topicInputLabel: "అంశం పేరు:",
+                topicDepthLabel: "లోతు స్థాయి:",
+                generateLessonBtn: "సమగ్ర పాఠాన్ని రూపొందించండి",
+                step3Title: "దశ 3: మీ వ్యక్తిగతీకరించిన నేర్చుకునే అనుభవం",
+                step3Instructions: "మీ పూర్తి పాఠం ప్యాకేజీ ఇక్కడ సిద్ధాంతం, ఉదాహరణలు, ప్రాక్టీస్ మరియు సిమ్యులేషన్లతో ప్రదర్శించబడుతుంది.",
+                theoryTab: "సిద్ధాంతం",
+                examplesTab: "ఉదాహరణలు",
+                practiceTab: "ప్రాక్టీస్",
+                iitTab: "పరీక్ష తయారీ",
+                simulationTab: "సిమ్యులేషన్",
+                theoryPlaceholder: "మీ వ్యక్తిగతీకరించిన సిద్ధాంత పాఠం ఉత్పత్తి అయిన తర్వాత ఇక్కడ ప్రదర్శించబడుతుంది.",
+                examplesPlaceholder: "మీ స్థాయికి అనుగుణంగా ఆచరణాత్మక ఉదాహరణలు ఇక్కడ ప్రదర్శించబడతాయి.",
+                practicePlaceholder: "మీ ప్రస్తుత సామర్థ్యానికి అనుగుణంగా ప్రాక్టీస్ సమస్యలు ఇక్కడ ప్రదర్శించబడతాయి.",
+                iitPlaceholder: "సంబంధితమైతే పరీక్ష తయారీ పదార్థం ఇక్కడ ప్రదర్శించబడుతుంది.",
+                simulationPlaceholder: "ఇంటరాక్టివ్ సిమ్యులేషన్లు ఇక్కడ ప్రదర్శించబడతాయి.",
+                progressTitle: "మీ నేర్చుకునే పురోగతి"
+            }
+            // Other languages would follow the same pattern
+        };
+
+        // Set initial language
+        let currentLanguage = 'en';
+        
+        // Function to change language
+        function changeLanguage() {
+            currentLanguage = document.getElementById('languageSelect').value;
+            updateLanguage();
+        }
+        
+        // Update all text elements to current language
+        function updateLanguage() {
+            const lang = translations[currentLanguage] || translations['en'];
+            
+            // Update all elements with translations
+            document.getElementById('appTitle').textContent = lang.appTitle;
+            document.getElementById('appSubtitle').textContent = lang.appSubtitle;
+            document.getElementById('step1Title').textContent = lang.step1Title;
+            document.getElementById('step1Instructions').textContent = lang.step1Instructions;
+            document.getElementById('currentClassLabel').textContent = lang.currentClassLabel;
+            document.getElementById('currentMarksLabel').textContent = lang.currentMarksLabel;
+            document.getElementById('strengthsLabel').textContent = lang.strengthsLabel;
+            document.getElementById('weaknessesLabel').textContent = lang.weaknessesLabel;
+            document.getElementById('learningStyleLabel').textContent = lang.learningStyleLabel;
+            document.getElementById('interestsLabel').textContent = lang.interestsLabel;
+            document.getElementById('goalLabel').textContent = lang.goalLabel;
+            document.getElementById('studyTimeLabel').textContent = lang.studyTimeLabel;
+            document.getElementById('saveProfileBtn').textContent = lang.saveProfileBtn;
+            document.getElementById('step2Title').textContent = lang.step2Title;
+            document.getElementById('step2Instructions').textContent = lang.step2Instructions;
+            document.getElementById('subjectSelectLabel').textContent = lang.subjectSelectLabel;
+            document.getElementById('topicInputLabel').textContent = lang.topicInputLabel;
+            document.getElementById('topicDepthLabel').textContent = lang.topicDepthLabel;
+            document.getElementById('generateLessonBtn').textContent = lang.generateLessonBtn;
+            document.getElementById('step3Title').textContent = lang.step3Title;
+            document.getElementById('step3Instructions').textContent = lang.step3Instructions;
+            document.getElementById('theoryTab').textContent = lang.theoryTab;
+            document.getElementById('examplesTab').textContent = lang.examplesTab;
+            document.getElementById('practiceTab').textContent = lang.practiceTab;
+            document.getElementById('iitTab').textContent = lang.iitTab;
+            document.getElementById('simulationTab').textContent = lang.simulationTab;
+            document.getElementById('theoryPlaceholder').textContent = lang.theoryPlaceholder;
+            document.getElementById('examplesPlaceholder').textContent = lang.examplesPlaceholder;
+            document.getElementById('practicePlaceholder').textContent = lang.practicePlaceholder;
+            document.getElementById('iitPlaceholder').textContent = lang.iitPlaceholder;
+            document.getElementById('simulationPlaceholder').textContent = lang.simulationPlaceholder;
+            document.getElementById('progressTitle').textContent = lang.progressTitle;
+        }
+
+        // Initialize language on load
+        window.onload = function() {
+            updateLanguage();
+            
+            // Set default profile if none exists
+            if (!localStorage.getItem("studentProfile")) {
+                const defaultProfile = {
+                    currentClass: "11",
+                    currentMarks: 75,
+                    strengths: ["Maths", "Chemistry"],
+                    weaknesses: ["Physics", "Biology"],
+                    learningStyle: "visual",
+                    interests: ["Drones", "Robotics", "Space"],
+                    goal: "serious",
+                    studyTime: "3"
+                };
+                localStorage.setItem("studentProfile", JSON.stringify(defaultProfile));
+            }
+        };
+
+        // Rest of your existing code (topicDatabase, saveProfile, analyzeProfile, etc.)
+        // ... [Previous JavaScript code remains the same until the end] ...
+
         // Enhanced Topic Database with detailed content
         const topicDatabase = {
             "Physics": {
@@ -573,7 +843,7 @@
             document.getElementById('theory').innerHTML = "<p>Generating personalized lesson... <span class='loading'>This may take a moment</span></p>";
             document.getElementById('examples').innerHTML = "<p>Preparing examples tailored to your level...</p>";
             document.getElementById('practice').innerHTML = "<p>Creating practice problems...</p>";
-            document.getElementById('iit').innerHTML = "<p>Compiling IIT preparation material...</p>";
+            document.getElementById('iit').innerHTML = "<p>Compiling exam preparation material...</p>";
             document.getElementById('simulation').innerHTML = "<p>Initializing simulation...</p>";
             
             // Show learning progress
@@ -643,7 +913,7 @@
             if (percent >= 30) path.innerHTML += `<div class="path-step completed">Theory content generated</div>`;
             if (percent >= 50) path.innerHTML += `<div class="path-step completed">Examples prepared</div>`;
             if (percent >= 70) path.innerHTML += `<div class="path-step completed">Practice problems created</div>`;
-            if (percent >= 90) path.innerHTML += `<div class="path-step completed">IIT material compiled</div>`;
+            if (percent >= 90) path.innerHTML += `<div class="path-step completed">Exam material compiled</div>`;
             if (percent >= 100) path.innerHTML += `<div class="path-step completed">Simulation ready</div>`;
         }
 
@@ -1067,49 +1337,49 @@
         function generateIITContent(topic, subject, depth, profile) {
             if (profile.goal === "no") {
                 return `<div class="lesson-section">
-                    <h2 class="lesson-title">IIT/JEE Preparation</h2>
-                    <p>You haven't selected IIT preparation as a goal. Enable it in your profile to unlock this content.</p>
+                    <h2 class="lesson-title">Exam Preparation</h2>
+                    <p>You haven't selected exam preparation as a goal. Enable it in your profile to unlock this content.</p>
                 </div>`;
             }
             
             let content = `<div class="lesson-section">
-                <h2 class="lesson-title">IIT/JEE Preparation - ${topic}</h2>
+                <h2 class="lesson-title">Exam Preparation - ${topic}</h2>
                 <div class="iit-box">
-                    <h3>JEE Importance</h3>`;
+                    <h3>Exam Importance</h3>`;
             
             if (topic === "e=mc2") {
                 content += `<p>This concept is crucial for:</p>
                 <ul>
-                    <li>Modern physics section (5-6 questions in JEE Main)</li>
+                    <li>Modern physics section (5-6 questions in competitive exams)</li>
                     <li>Nuclear physics problems</li>
                     <li>Mass-energy conversion calculations</li>
                     <li>Photon energy and particle physics</li>
                 </ul>
-                <p>Expected questions: 1-2 in JEE Main, potentially more in JEE Advanced</p>`;
+                <p>Expected questions: 1-2 in most competitive exams</p>`;
             } else if (topic === "Motion") {
                 content += `<p>This fundamental concept appears in:</p>
                 <ul>
-                    <li>Kinematics problems (3-4 questions in JEE Main)</li>
+                    <li>Kinematics problems (3-4 questions in exams)</li>
                     <li>Projectile motion</li>
                     <li>Relative motion concepts</li>
                     <li>As basis for dynamics and other advanced topics</li>
                 </ul>
-                <p>Expected questions: 2-3 in JEE Main, often combined with other concepts in JEE Advanced</p>`;
+                <p>Expected questions: 2-3 in most exams</p>`;
             } else if (topic === "Gravitation") {
                 content += `<p>This concept is important for:</p>
                 <ul>
-                    <li>Gravitation problems (2-3 questions in JEE Main)</li>
+                    <li>Gravitation problems (2-3 questions in exams)</li>
                     <li>Orbital mechanics</li>
                     <li>Kepler's laws applications</li>
                     <li>Escape velocity calculations</li>
                 </ul>`;
             } else {
-                content += `<p>This topic may appear in JEE depending on the subject and depth of coverage.</p>`;
+                content += `<p>This topic may appear in exams depending on the subject and depth of coverage.</p>`;
             }
             
             content += `</div>`; // Close iit-box
             
-            // Add JEE preparation strategy based on class
+            // Add exam preparation strategy based on class
             content += `<div class="iit-box">
                 <h3>Preparation Strategy</h3>`;
             
@@ -1121,42 +1391,42 @@
                     <li>Developing problem-solving approach</li>
                     <li>Connecting concepts to real-world applications</li>
                 </ul>
-                <p>Recommended resources: NCERT textbooks, Foundation books for IIT preparation</p>`;
+                <p>Recommended resources: NCERT textbooks, Foundation books</p>`;
             } else {
-                content += `<p>For Class ${profile.currentClass} JEE preparation:</p>
+                content += `<p>For Class ${profile.currentClass} exam preparation:</p>
                 <ul>
                     <li>Master all derivations and concepts</li>
                     <li>Practice 20-30 problems on this topic</li>
-                    <li>Solve previous year JEE questions</li>
+                    <li>Solve previous year questions</li>
                     <li>Time yourself - aim for 2-3 minutes per question</li>
                     <li>Analyze mistakes and weak areas</li>
                 </ul>
-                <p>Recommended resources: HC Verma, DC Pandey, Irodov (for advanced), previous 10 years papers</p>`;
+                <p>Recommended resources: Standard textbooks, previous years papers</p>`;
             }
             
             content += `</div>`; // Close iit-box
             
-            // Add JEE questions if relevant
+            // Add exam questions if relevant
             if (profile.currentClass >= 11 && (depth === "iit" || depth === "advanced")) {
                 content += `<div class="iit-box">
-                    <h3>JEE-Level Questions</h3>`;
+                    <h3>Exam-Level Questions</h3>`;
                 
                 if (topic === "e=mc2") {
-                    content += `<p><strong>JEE Main 2020:</strong> A particle of mass m at rest decays into two particles of masses m₁ and m₂ having non-zero velocities. 
+                    content += `<p><strong>Exam Question:</strong> A particle of mass m at rest decays into two particles of masses m₁ and m₂ having non-zero velocities. 
                     The ratio of de-Broglie wavelengths is (a) m₁/m₂ (b) m₂/m₁ (c) 1 (d) √(m₂/m₁)</p>
                     <p><strong>Solution:</strong> (c) 1 (since momenta are equal and opposite)</p>`;
                     
-                    content += `<p><strong>JEE Advanced 2019:</strong> A photon of wavelength λ is scattered by an electron initially at rest. 
+                    content += `<p><strong>Advanced Question:</strong> A photon of wavelength λ is scattered by an electron initially at rest. 
                     If the photon wavelength becomes λ' after scattering, calculate the kinetic energy imparted to the electron.</p>
                     <p><strong>Solution Approach:</strong> Use energy conservation: hc/λ = hc/λ' + KE</p>`;
                 } else if (topic === "Motion") {
-                    content += `<p><strong>JEE Main 2021:</strong> A particle moves in straight line with velocity v = √x. What is acceleration at x=4m?</p>
+                    content += `<p><strong>Exam Question:</strong> A particle moves in straight line with velocity v = √x. What is acceleration at x=4m?</p>
                     <p><strong>Solution:</strong> a = dv/dt = (dv/dx)(dx/dt) = (1/2√x)(√x) = 0.5 m/s²</p>`;
                     
-                    content += `<p><strong>JEE Advanced 2018:</strong> Two particles are projected from same point with same speed u at angles θ and (90°-θ). 
+                    content += `<p><strong>Advanced Question:</strong> Two particles are projected from same point with same speed u at angles θ and (90°-θ). 
                     Show that their trajectories intersect at right angles when tanθ = √2.</p>`;
                 } else if (topic === "Gravitation") {
-                    content += `<p><strong>JEE Main 2019:</strong> A planet has twice the radius and eight times the mass of Earth. What is the escape velocity from its surface?</p>
+                    content += `<p><strong>Exam Question:</strong> A planet has twice the radius and eight times the mass of Earth. What is the escape velocity from its surface?</p>
                     <p><strong>Solution:</strong> v = √(2GM/R), so new v = √(2G×8M/2R) = 2×√(2GM/R) = 2×11.2 = 22.4 km/s</p>`;
                 }
                 
@@ -1239,7 +1509,7 @@
             }
             
             content += `</div>
-                <p id="simulationStatus">Initializing simulation... <span class="loading">Please wait</span></p>
+                <p id="simulationStatus">Initializing simulation... <span class='loading'>Please wait</span></p>
                 <div id="simulationResults"></div>
             </div></div>`; // Close simulation-box and lesson-section
             
@@ -1281,21 +1551,6 @@
             } catch (e) {
                 return "Couldn't fetch additional information.";
             }
-        }
-
-        // Initialize with default profile if none exists
-        if (!localStorage.getItem("studentProfile")) {
-            const defaultProfile = {
-                currentClass: "11",
-                currentMarks: 75,
-                strengths: ["Maths", "Chemistry"],
-                weaknesses: ["Physics", "Biology"],
-                learningStyle: "visual",
-                interests: ["Drones", "Robotics", "Space"],
-                goal: "serious",
-                studyTime: "3"
-            };
-            localStorage.setItem("studentProfile", JSON.stringify(defaultProfile));
         }
     </script>
 </body>
