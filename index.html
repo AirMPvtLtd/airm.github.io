@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSwarm Auto (Free Edition)</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        .header { text-align: center; color: #333; }
+        .container { max-width: 800px; margin: 20px auto; }
+        .section { background: white; padding: 15px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input[type="text"], select, input[type="number"] { padding: 8px; width: 70%; margin: 5px 0; }
+        button { padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .output-box { margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 5px; }
+        .loading { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>EduSwarm Auto (Free Edition)</h1>
+        <h3>Learn Free, Fly Virtual</h3>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>Setup Your Profile</h2>
+            <input type="text" id="strengths" placeholder="Your strengths (e.g., Maths)" value="Maths">
+            <input type="text" id="weaknesses" placeholder="Your weaknesses (e.g., Physics)" value="Physics">
+            <select id="learningStyle">
+                <option value="visual" selected>Visual</option>
+                <option value="auditory">Auditory</option>
+                <option value="kinesthetic">Kinesthetic</option>
+            </select>
+            <input type="text" id="interests" placeholder="Your interests (e.g., Drones)" value="Drones">
+            <input type="number" id="currentMarks" placeholder="Current Class Marks (0-100)" value="60">
+            <select id="currentClass">
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+                <option value="11">Class 11</option>
+                <option value="12">Class 12</option>
+            </select>
+            <select id="goal">
+                <option value="no">No IIT Goal</option>
+                <option value="yes" selected>IIT Qualification</option>
+            </select>
+            <button onclick="saveProfile()">Save Profile</button>
+        </div>
+
+        <div class="section">
+            <h2>Choose Your Topic</h2>
+            <input type="text" id="topicInput" placeholder="e.g., Motion, Gravity" value="Motion">
+            <button onclick="simulateLesson()">Generate Lesson</button>
+        </div>
+
+        <div class="section">
+            <h2>Your Personalized Lesson</h2>
+            <div id="lessonOutput" class="output-box">Click "Generate Lesson" to start simulation.</div>
+        </div>
+    </div>
+
+    <script>
+        // Static Topic Database
+        const topicDatabase = {
+            "6": {
+                "Maths": ["Basic Arithmetic", "Fractions"],
+                "Science": ["Motion and Measurement", "Fun with Magnets"]
+            },
+            "7": {
+                "Maths": ["Integers", "Simple Equations"],
+                "Science": ["Motion and Time", "Heat"]
+            },
+            "8": {
+                "Maths": ["Algebraic Expressions", "Exponents"],
+                "Science": ["Force and Pressure", "Sound"]
+            },
+            "9": {
+                "Maths": ["Polynomials", "Coordinate Geometry"],
+                "Physics": ["Motion", "Force and Laws of Motion"]
+            },
+            "10": {
+                "Maths": ["Quadratic Equations", "Trigonometry"],
+                "Physics": ["Laws of Motion", "Gravitation"]
+            },
+            "11": {
+                "Maths": ["Sets", "Trigonometric Functions"],
+                "Physics": ["Kinematics", "Work, Energy, Power"]
+            },
+            "12": {
+                "Maths": ["Calculus", "Vectors"],
+                "Physics": ["Electrostatics", "Current Electricity"]
+            }
+        };
+
+        // Save profile
+        function saveProfile() {
+            const profile = {
+                strengths: document.getElementById("strengths").value,
+                weaknesses: document.getElementById("weaknesses").value,
+                learningStyle: document.getElementById("learningStyle").value,
+                interests: document.getElementById("interests").value,
+                currentMarks: parseInt(document.getElementById("currentMarks").value),
+                currentClass: parseInt(document.getElementById("currentClass").value),
+                goal: document.getElementById("goal").value
+            };
+            localStorage.setItem("studentProfile", JSON.stringify(profile));
+            alert("Profile saved!");
+        }
+
+        // Simulate drone data
+        function simulateDrone() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const altitude = Math.floor(Math.random() * 41) + 10;
+                    const speed = (Math.random() * 9 + 1).toFixed(1);
+                    const distance = Math.floor(Math.random() * 81) + 20;
+                    resolve({ altitude, speed, distance });
+                }, 1000);
+            });
+        }
+
+        // Fetch web info (optional)
+        async function fetchTopicInfo(topic) {
+            if (!navigator.onLine) return "Offline mode: Using static data.";
+            try {
+                const response = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${topic}`);
+                const data = await response.json();
+                return data.extract || "No info available.";
+            } catch (e) {
+                return "Web info unavailable.";
+            }
+        }
+
+        // Generate lesson
+        async function generateLesson(topic, profile) {
+            let lesson = `Lesson on ${topic}: `;
+            let styleNote = "";
+            let examFocus = "";
+            let iitPrep = "";
+            const classTopics = topicDatabase[profile.currentClass] || {};
+
+            // Check if topic is in syllabus
+            let inSyllabus = false;
+            for (let subject in classTopics) {
+                if (classTopics[subject].includes(topic)) {
+                    inSyllabus = true;
+                    lesson += `This is a key topic in your Class ${profile.currentClass} ${subject} syllabus. `;
+                    break;
+                }
+            }
+            if (!inSyllabus) lesson += `${topic} is an extra topic to boost your knowledge. `;
+
+            // Learning Style
+            if (profile.learningStyle === "visual") {
+                styleNote = "Here’s a visual explanation with diagrams.";
+                lesson += `Picture a drone lifting off—its propellers push it up! `;
+            } else if (profile.learningStyle === "auditory") {
+                styleNote = "Listen to this explanation.";
+                lesson += `Hear the hum of a drone as it flies! `;
+            } else {
+                styleNote = "Try this hands-on activity.";
+                lesson += `Feel it by imagining you’re steering a drone! `;
+            }
+
+            // Strengths/Weaknesses
+            if (profile.weaknesses.toLowerCase().includes(topic.toLowerCase())) {
+                lesson += `Since ${topic} is tough, let’s keep it simple: it’s about change in position. `;
+            }
+
+            // Interests
+            if (profile.interests.toLowerCase().includes("drones")) {
+                lesson += `Drones use ${topic} to navigate—cool, right? `;
+            }
+
+            // Exam Focus
+            if (profile.currentMarks < 70) {
+                examFocus += `Your ${profile.currentMarks}% in Class ${profile.currentClass} needs a boost—master basics for exams. `;
+            } else {
+                examFocus += `With ${profile.currentMarks}% in Class ${profile.currentClass}, let’s sharpen skills for top marks! `;
+            }
+
+            // IIT Prep
+            if (profile.goal === "yes") {
+                if (profile.currentClass <= 8) {
+                    iitPrep += `IIT Prep (Class ${profile.currentClass}): Start with basics—${topic} is foundational for JEE. Learn key terms now! `;
+                } else if (profile.currentClass <= 10) {
+                    iitPrep += `IIT Prep (Class ${profile.currentClass}): Practice problems like speed = distance/time for JEE prep. `;
+                } else {
+                    iitPrep += `IIT Prep (Class ${profile.currentClass}): Master ${topic} for JEE—focus on equations like v = u + at! `;
+                }
+            }
+
+            // Web enhancement
+            const webInfo = await fetchTopicInfo(topic);
+            const quiz = `Q: What is ${topic}? A: It’s the change in an object’s position over time.`;
+            return `${lesson}${examFocus}${iitPrep}(Web: ${webInfo.slice(0, 100)}...)(${styleNote})<br>${quiz}`;
+        }
+
+        // Simulate lesson
+        async function simulateLesson() {
+            const outputDiv = document.getElementById("lessonOutput");
+            const topic = document.getElementById("topicInput").value || "Motion";
+            const profile = JSON.parse(localStorage.getItem("studentProfile")) || {
+                strengths: "Maths",
+                weaknesses: "Physics",
+                learningStyle: "visual",
+                interests: "Drones",
+                currentMarks: 60,
+                currentClass: 6,
+                goal: "yes"
+            };
+
+            outputDiv.innerHTML = "Generating lesson... <span class='loading'>Please wait</span>";
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            const lesson = await generateLesson(topic, profile);
+            outputDiv.innerHTML = lesson;
+
+            outputDiv.innerHTML += "<br><br>Running drone simulation... <span class='loading'>Flying</span>";
+            const droneData = await simulateDrone();
+            const simLesson = `Drone Simulation: Flew ${droneData.distance}m at ${droneData.speed}m/s, reached ${droneData.altitude}m.<br>Practice: Calculate time (distance/speed) for Class ${profile.currentClass} and IIT prep!`;
+            outputDiv.innerHTML = lesson + "<br><br>" + simLesson;
+        }
+    </script>
+</body>
+</html>
