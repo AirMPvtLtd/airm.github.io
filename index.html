@@ -185,7 +185,7 @@
             </select>
             
             <label for="topicInput">Topic Name:</label>
-            <input type="text" id="topicInput" placeholder="e.g., Motion, Thermodynamics, Algebra" value="e=mc2">
+            <input type="text" id="topicInput" placeholder="e.g., Motion, Thermodynamics, Algebra" value="Motion">
             
             <label for="topicDepth">Depth Level:</label>
             <select id="topicDepth">
@@ -296,6 +296,16 @@
                     "11": {
                         "description": "Kinematics in one and two dimensions",
                         "content": "Motion equations: v = u + at, s = ut + ½at², v² = u² + 2as. Projectile motion has independent horizontal (constant velocity) and vertical (acceleration g) components."
+                    }
+                },
+                "Gravitation": {
+                    "9": {
+                        "description": "Basic concepts of gravitational force",
+                        "content": "Gravity is the force that attracts objects with mass. On Earth, it gives objects weight. The acceleration due to gravity (g) is about 9.8 m/s²."
+                    },
+                    "11": {
+                        "description": "Newton's law of universal gravitation",
+                        "content": "F = G(m₁m₂)/r², where G is gravitational constant. Explains planetary motion, tides, and weight variation."
                     }
                 }
             },
@@ -600,17 +610,25 @@
                                 document.getElementById('simulation').innerHTML = simulationContent;
                                 updateProgressBar(100);
                                 
-                                // Show drone animation
-                                const drone = document.getElementById("drone");
-                                drone.style.display = "block";
-                                setTimeout(() => { 
-                                    drone.style.display = "none";
-                                }, 3000);
+                                // Show drone animation only for relevant topics
+                                if (shouldShowDrone(topic, subject)) {
+                                    const drone = document.getElementById("drone");
+                                    drone.style.display = "block";
+                                    setTimeout(() => { 
+                                        drone.style.display = "none";
+                                    }, 3000);
+                                }
                             }, 1000);
                         }, 1000);
                     }, 1000);
                 }, 1000);
             }, 1500);
+        }
+
+        // Check if drone example should be shown for this topic
+        function shouldShowDrone(topic, subject) {
+            const droneRelevantTopics = ["Motion", "Gravitation", "Force", "Energy", "e=mc2"];
+            return subject === "Physics" && droneRelevantTopics.includes(topic);
         }
 
         // Update progress bar
@@ -704,6 +722,16 @@
                     t = Time<br>
                     s = Displacement</p>
                 </div>`;
+            } else if (topic === "Gravitation") {
+                content += `<div class="formula">
+                    <p>Newton's law of gravitation:</p>
+                    <p>F = G(m₁m₂)/r²</p>
+                    <p>Where:<br>
+                    F = Gravitational force<br>
+                    G = Gravitational constant (6.674×10⁻¹¹ N·m²/kg²)<br>
+                    m₁, m₂ = Masses of objects<br>
+                    r = Distance between centers</p>
+                </div>`;
             }
             
             content += `</div>`; // Close concept-box
@@ -726,6 +754,14 @@
                         <li>Velocity: How fast and in what direction it's moving</li>
                         <li>Acceleration: How quickly velocity is changing</li>
                     </ul>`;
+                } else if (topic === "Gravitation") {
+                    content += `<p>Gravity is the force that pulls objects together. On Earth, it makes things fall toward the ground.</p>
+                    <p>Key points:</p>
+                    <ul>
+                        <li>All objects with mass have gravity</li>
+                        <li>More mass = stronger gravity</li>
+                        <li>Farther apart = weaker gravity</li>
+                    </ul>`;
                 }
             } else if (depth === "intermediate") {
                 content += `<p>Now let's dive deeper into ${topic}:</p>`;
@@ -740,6 +776,13 @@
                         <li>Velocity is the rate of change of position</li>
                         <li>Acceleration is the rate of change of velocity</li>
                         <li>These changes can be represented graphically (position-time, velocity-time graphs)</li>
+                    </ul>`;
+                } else if (topic === "Gravitation") {
+                    content += `<p>Newton's law explains how all masses attract each other. The force depends on:</p>
+                    <ul>
+                        <li>The product of the two masses</li>
+                        <li>The inverse square of the distance between them</li>
+                        <li>Gravitational constant G</li>
                     </ul>`;
                 }
             } else { // advanced or iit
@@ -758,11 +801,19 @@
                         <li>Relative motion between reference frames</li>
                         <li>Non-uniform acceleration cases</li>
                     </ul>`;
+                } else if (topic === "Gravitation") {
+                    content += `<p>Advanced gravitation concepts:</p>
+                    <ul>
+                        <li>Gravitational potential energy</li>
+                        <li>Kepler's laws of planetary motion</li>
+                        <li>Escape velocity calculations</li>
+                        <li>Introduction to Einstein's general relativity</li>
+                    </ul>`;
                 }
             }
             
             // Add interest connection if relevant
-            if (profile.interests.includes("Drones") && (topic === "Motion" || topic === "e=mc2")) {
+            if (profile.interests.includes("Drones") && shouldShowDrone(topic, subject)) {
                 content += `<div class="example-box">
                     <h4>Drone Connection</h4>
                     <p>Drones use ${topic} concepts:</p>`;
@@ -778,6 +829,12 @@
                         <li>Battery energy is related to mass via E = mc² (though chemical energy is different)</li>
                         <li>Nuclear-powered drones (theoretical) would directly apply this equation</li>
                         <li>Energy-mass considerations affect payload capacity</li>
+                    </ul>`;
+                } else if (topic === "Gravitation") {
+                    content += `<ul>
+                        <li>Drones must overcome gravity to fly</li>
+                        <li>Thrust must exceed gravitational force for takeoff</li>
+                        <li>Gravity affects battery usage and flight time</li>
                     </ul>`;
                 }
                 
@@ -851,10 +908,20 @@
                     <p>Solution: Time until collision = 2000/(30+20) = 40 s</p>
                     <p>Bird distance = speed × time = 50 × 40 = 2000 m</p>`;
                 }
+            } else if (topic === "Gravitation") {
+                content += `<p><strong>Example 1:</strong> Earth's gravitational force</p>
+                <p>Calculate force between Earth (5.97×10²⁴ kg) and 1kg object at surface (radius 6.371×10⁶ m)</p>
+                <p>F = G(m₁m₂)/r² = (6.674×10⁻¹¹)(5.97×10²⁴)(1)/(6.371×10⁶)² ≈ 9.81 N (which we know as weight)</p>`;
+                
+                if (depth === "intermediate" || depth === "advanced" || depth === "iit") {
+                    content += `<p><strong>Example 2:</strong> Gravitational force between people</p>
+                    <p>Two 70kg people stand 1m apart. Calculate gravitational attraction.</p>
+                    <p>F = (6.674×10⁻¹¹)(70)(70)/1² ≈ 3.27×10⁻⁷ N (extremely small!)</p>`;
+                }
             }
             
-            // Add interest-based examples
-            if (profile.interests.includes("Drones")) {
+            // Add interest-based examples if relevant
+            if (profile.interests.includes("Drones") && shouldShowDrone(topic, subject)) {
                 content += `<div class="example-box">
                     <h4>Drone Examples</h4>`;
                 
@@ -867,6 +934,9 @@
                     Calculate equivalent mass using E = mc².</p>
                     <p>100 Wh = 360,000 J</p>
                     <p>m = E/c² = 360,000/(9×10¹⁶) ≈ 4×10⁻¹² kg (extremely small!)</p>`;
+                } else if (topic === "Gravitation") {
+                    content += `<p><strong>Drone Example:</strong> A drone weighs 1.5kg. Calculate the thrust needed to hover.</p>
+                    <p>Thrust must equal weight = mg = 1.5×9.8 = 14.7 N</p>`;
                 }
                 
                 content += `</div>`;
@@ -917,10 +987,21 @@
                     content += `<p><strong>JEE Level:</strong> A particle is projected from ground with speed u at angle θ. Show that at any time t, 
                     its velocity is perpendicular to initial velocity when t = 2u/(g sinθ).</p>`;
                 }
+            } else if (topic === "Gravitation") {
+                if (profile.currentMarks < 50) {
+                    content += `<p><strong>Basic:</strong> Calculate your weight on Earth (mass × g).</p>
+                    <p><strong>Basic:</strong> If you could jump 0.5m on Earth, how high could you jump on the Moon (g = 1.62 m/s²)?</p>`;
+                } else if (profile.currentMarks < 70) {
+                    content += `<p><strong>Intermediate:</strong> Calculate gravitational force between Earth and Moon (mass 7.34×10²² kg, distance 3.84×10⁸ m).</p>
+                    <p><strong>Intermediate:</strong> At what height above Earth's surface would gravity be half its surface value?</p>`;
+                } else {
+                    content += `<p><strong>Advanced:</strong> Calculate escape velocity from Earth's surface.</p>
+                    <p><strong>Advanced:</strong> A satellite orbits Earth at height h. Derive expression for its orbital velocity.</p>`;
+                }
             }
             
-            // Add interest-based practice problems
-            if (profile.interests.includes("Drones")) {
+            // Add interest-based practice problems if relevant
+            if (profile.interests.includes("Drones") && shouldShowDrone(topic, subject)) {
                 content += `<div class="practice-box">
                     <h4>Drone Practice</h4>`;
                 
@@ -930,6 +1011,8 @@
                 } else if (topic === "e=mc2") {
                     content += `<p><strong>Problem:</strong> A drone battery stores 200Wh of energy. If this energy could be converted to mass, 
                     how much mass would it create? (Use E = mc²)</p>`;
+                } else if (topic === "Gravitation") {
+                    content += `<p><strong>Problem:</strong> A drone has mass 1.2kg. Calculate the additional energy needed to climb 50m against gravity.</p>`;
                 }
                 
                 content += `</div>`;
@@ -970,6 +1053,10 @@
                     <p>   h = ut - ½gt² ≈ 20×2.04 - 4.9×4.16 ≈ 20.4m</p>
                     <p>   Total time = 2×2.04 ≈ 4.08s</p>`;
                 }
+            } else if (topic === "Gravitation") {
+                content += `<p><strong>Basic Solutions:</strong></p>
+                <p>1. Weight = mass × g (e.g., 60kg × 9.8 = 588 N)</p>
+                <p>2. On Moon: h = (v²)/(2g_moon) = (2g_earth×0.5)/(2g_moon) = (9.8×0.5)/1.62 ≈ 3.02m</p>`;
             }
             
             content += `</div></div>`; // Close practice-box and lesson-section
@@ -1008,6 +1095,16 @@
                     <li>As basis for dynamics and other advanced topics</li>
                 </ul>
                 <p>Expected questions: 2-3 in JEE Main, often combined with other concepts in JEE Advanced</p>`;
+            } else if (topic === "Gravitation") {
+                content += `<p>This concept is important for:</p>
+                <ul>
+                    <li>Gravitation problems (2-3 questions in JEE Main)</li>
+                    <li>Orbital mechanics</li>
+                    <li>Kepler's laws applications</li>
+                    <li>Escape velocity calculations</li>
+                </ul>`;
+            } else {
+                content += `<p>This topic may appear in JEE depending on the subject and depth of coverage.</p>`;
             }
             
             content += `</div>`; // Close iit-box
@@ -1058,6 +1155,9 @@
                     
                     content += `<p><strong>JEE Advanced 2018:</strong> Two particles are projected from same point with same speed u at angles θ and (90°-θ). 
                     Show that their trajectories intersect at right angles when tanθ = √2.</p>`;
+                } else if (topic === "Gravitation") {
+                    content += `<p><strong>JEE Main 2019:</strong> A planet has twice the radius and eight times the mass of Earth. What is the escape velocity from its surface?</p>
+                    <p><strong>Solution:</strong> v = √(2GM/R), so new v = √(2G×8M/2R) = 2×√(2GM/R) = 2×11.2 = 22.4 km/s</p>`;
                 }
                 
                 content += `</div>`; // Close iit-box
@@ -1093,8 +1193,7 @@
                     <li>Particles collide at high speeds</li>
                     <li>Mass converts to energy according to E = mc²</li>
                     <li>New particles form from this energy</li>
-                </ul>
-                <p>Watch the drone animation represent energy transfer!</p>`;
+                </ul>`;
             } else if (topic === "Motion") {
                 content += `<p>Motion simulation concepts:</p>
                 <ul>
@@ -1102,8 +1201,17 @@
                     <li>Velocity and acceleration vectors</li>
                     <li>Projectile motion trajectory</li>
                     <li>Relative motion examples</li>
-                </ul>
-                <p>The flying drone demonstrates motion concepts in action!</p>`;
+                </ul>`;
+            } else if (topic === "Gravitation") {
+                content += `<p>Gravitation simulation concepts:</p>
+                <ul>
+                    <li>Planetary orbits visualization</li>
+                    <li>Gravity well representation</li>
+                    <li>Escape velocity demonstration</li>
+                    <li>Tidal forces explanation</li>
+                </ul>`;
+            } else {
+                content += `<p>Interactive simulation for ${topic} concepts.</p>`;
             }
             
             // Add simulation parameters based on profile
@@ -1125,6 +1233,11 @@
                 content += `<p>Interactive mode - adjust parameters to see changes</p>`;
             }
             
+            // Add drone reference if relevant
+            if (profile.interests.includes("Drones") && shouldShowDrone(topic, subject)) {
+                content += `<p>The flying drone demonstrates ${topic} concepts in action!</p>`;
+            }
+            
             content += `</div>
                 <p id="simulationStatus">Initializing simulation... <span class="loading">Please wait</span></p>
                 <div id="simulationResults"></div>
@@ -1132,9 +1245,13 @@
             
             // Start simulation after a delay
             setTimeout(() => {
-                document.getElementById('simulationStatus').innerHTML = "Simulation ready! Watch the drone animation.";
-                const drone = document.getElementById("drone");
-                drone.style.display = "block";
+                document.getElementById('simulationStatus').innerHTML = "Simulation ready!";
+                
+                if (shouldShowDrone(topic, subject)) {
+                    document.getElementById('simulationStatus').innerHTML += " Watch the drone animation.";
+                    const drone = document.getElementById("drone");
+                    drone.style.display = "block";
+                }
                 
                 setTimeout(() => {
                     document.getElementById('simulationResults').innerHTML = 
@@ -1144,7 +1261,10 @@
                             <li>Duration: 3 seconds</li>
                             <li>Learning points reinforced: ${Math.floor(Math.random()*3)+2}</li>
                         </ul>`;
-                    drone.style.display = "none";
+                    const drone = document.getElementById("drone");
+                    if (drone.style.display === "block") {
+                        drone.style.display = "none";
+                    }
                 }, 3000);
             }, 2000);
             
