@@ -12,9 +12,21 @@
         input[type="text"], select, input[type="number"] { padding: 8px; width: 70%; margin: 5px 0; }
         button { padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
         button:hover { background-color: #218838; }
-        .output-box { margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 5px; }
+        .output-box { margin-top: 10px; padding: 10px; background: #e9ecef; border-radius: 5px; position: relative; min-height: 100px; }
         .loading { color: #666; font-style: italic; }
         .instructions { font-size: 14px; color: #555; margin-bottom: 10px; }
+        .drone-animation { 
+            position: absolute; 
+            width: 50px; 
+            top: 10px; 
+            left: -50px; 
+            animation: fly 3s linear forwards; 
+            display: none; 
+        }
+        @keyframes fly {
+            0% { left: -50px; top: 10px; }
+            100% { left: 90%; top: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -61,8 +73,11 @@
 
         <div class="section">
             <h2>Step 3: Your Personalized Lesson & Simulation</h2>
-            <p class="instructions">Your lesson will appear here with a drone simulation linked to the topic—learn and practice!</p>
-            <div id="lessonOutput" class="output-box">Click "Generate Lesson" above to start.</div>
+            <p class="instructions">Your lesson will appear here with a drone simulation—watch it fly!</p>
+            <div id="lessonOutput" class="output-box">
+                Click "Generate Lesson" above to start.
+                <img src="https://cdn-icons-png.flaticon.com/512/3038/3038102.png" id="drone" class="drone-animation" alt="Drone">
+            </div>
         </div>
     </div>
 
@@ -98,23 +113,23 @@
             alert("Profile saved! Now choose a topic below.");
         }
 
-        // Simulate drone data based on topic
+        // Simulate drone data
         function simulateDrone(topic) {
             return new Promise((resolve) => {
                 setTimeout(() => {
                     let altitude, speed, distance;
                     if (topic.toLowerCase().includes("motion") || topic.toLowerCase().includes("kinematics")) {
-                        altitude = Math.floor(Math.random() * 20) + 10; // 10-30m
-                        speed = (Math.random() * 5 + 2).toFixed(1); // 2-7 m/s
-                        distance = Math.floor(Math.random() * 50) + 20; // 20-70m
+                        altitude = Math.floor(Math.random() * 20) + 10;
+                        speed = (Math.random() * 5 + 2).toFixed(1);
+                        distance = Math.floor(Math.random() * 50) + 20;
                     } else if (topic.toLowerCase().includes("force") || topic.toLowerCase().includes("gravitation")) {
-                        altitude = Math.floor(Math.random() * 30) + 20; // 20-50m
-                        speed = (Math.random() * 3 + 1).toFixed(1); // 1-4 m/s
-                        distance = Math.floor(Math.random() * 40) + 10; // 10-50m
+                        altitude = Math.floor(Math.random() * 30) + 20;
+                        speed = (Math.random() * 3 + 1).toFixed(1);
+                        distance = Math.floor(Math.random() * 40) + 10;
                     } else {
-                        altitude = Math.floor(Math.random() * 41) + 10; // 10-50m
-                        speed = (Math.random() * 9 + 1).toFixed(1); // 1-10 m/s
-                        distance = Math.floor(Math.random() * 81) + 20; // 20-100m
+                        altitude = Math.floor(Math.random() * 41) + 10;
+                        speed = (Math.random() * 9 + 1).toFixed(1);
+                        distance = Math.floor(Math.random() * 81) + 20;
                     }
                     resolve({ altitude, speed, distance });
                 }, 1000);
@@ -191,9 +206,10 @@
             return `${lesson}<br>${examFocus}<br>${iitPrep}<br>(Web: ${webInfo.slice(0, 100)}...)<br>(${styleNote})${quiz}`;
         }
 
-        // Simulate lesson with enhanced simulation
+        // Simulate lesson with drone animation
         async function simulateLesson() {
             const outputDiv = document.getElementById("lessonOutput");
+            const drone = document.getElementById("drone");
             const topic = document.getElementById("topicInput").value || "Motion";
             const profile = JSON.parse(localStorage.getItem("studentProfile")) || {
                 strengths: "Maths",
@@ -212,15 +228,19 @@
 
             outputDiv.innerHTML += "<br><br>Running drone simulation... <span class='loading'>Flying</span>";
             const droneData = await simulateDrone(topic);
-            let simLesson = `<br><strong>Drone Simulation:</strong> Flew ${droneData.distance}m at ${droneData.speed}m/s, reached ${droneData.altitude}m.`;
-            if (topic.toLowerCase().includes("motion") || topic.toLowerCase().includes("kinematics")) {
-                simLesson += `<br><strong>Practice:</strong> Calculate time taken (distance/speed = ${droneData.distance}/${droneData.speed} = ${(droneData.distance / droneData.speed).toFixed(2)}s) for Class ${profile.currentClass} and IIT prep!`;
-            } else if (topic.toLowerCase().includes("force")) {
-                simLesson += `<br><strong>Practice:</strong> Estimate force needed to lift drone (mass × gravity, assume mass = 1kg, g = 9.8m/s² = 9.8N).`;
-            } else {
-                simLesson += `<br><strong>Practice:</strong> Explore how ${topic} applies to drone flight!`;
-            }
-            outputDiv.innerHTML = lesson + simLesson;
+            drone.style.display = "block"; // Show drone image
+            setTimeout(() => { 
+                drone.style.display = "none"; // Hide after animation
+                let simLesson = `<br><strong>Drone Simulation:</strong> Flew ${droneData.distance}m at ${droneData.speed}m/s, reached ${droneData.altitude}m.`;
+                if (topic.toLowerCase().includes("motion") || topic.toLowerCase().includes("kinematics")) {
+                    simLesson += `<br><strong>Practice:</strong> Calculate time taken (distance/speed = ${droneData.distance}/${droneData.speed} = ${(droneData.distance / droneData.speed).toFixed(2)}s) for Class ${profile.currentClass} and IIT prep!`;
+                } else if (topic.toLowerCase().includes("force")) {
+                    simLesson += `<br><strong>Practice:</strong> Estimate force needed to lift drone (mass × gravity, assume mass = 1kg, g = 9.8m/s² = 9.8N).`;
+                } else {
+                    simLesson += `<br><strong>Practice:</strong> Explore how ${topic} applies to drone flight!`;
+                }
+                outputDiv.innerHTML = lesson + simLesson;
+            }, 3000); // Animation lasts 3 seconds
         }
     </script>
 </body>
