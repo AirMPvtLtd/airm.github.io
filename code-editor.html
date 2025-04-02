@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEPConnect Code Editor</title>
+    <style>
+        .code-editor-container {
+            font-family: 'Consolas', 'Courier New', monospace;
+            margin: 20px auto;
+            max-width: 1000px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .editor-header {
+            background: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .language-selector {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            background: #34495e;
+            color: white;
+        }
+        
+        .editor-toolbar {
+            background: #34495e;
+            padding: 8px 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .editor-btn {
+            padding: 5px 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+        
+        .editor-btn:hover {
+            background: #2980b9;
+        }
+        
+        .editor-btn.run {
+            background: #2ecc71;
+        }
+        
+        .editor-btn.run:hover {
+            background: #27ae60;
+        }
+        
+        .editor-btn.clear {
+            background: #e74c3c;
+        }
+        
+        .editor-btn.clear:hover {
+            background: #c0392b;
+        }
+        
+        #codeEditor {
+            width: 100%;
+            height: 400px;
+            padding: 15px;
+            box-sizing: border-box;
+            border: none;
+            background: #1e1e1e;
+            color: #f8f8f8;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            tab-size: 4;
+        }
+        
+        .output-container {
+            background: #1e1e1e;
+            color: #f8f8f8;
+            padding: 15px;
+            border-top: 1px solid #34495e;
+        }
+        
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #95a5a6;
+        }
+        
+        #output {
+            min-height: 100px;
+            white-space: pre-wrap;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        
+        .loading {
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #e74c3c;
+        }
+        
+        .success {
+            color: #2ecc71;
+        }
+        
+        .lesson-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .lesson-title {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        
+        .example-code {
+            background: #1e1e1e;
+            color: #f8f8f8;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .code-editor-container {
+                margin: 10px;
+            }
+            
+            #codeEditor {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="code-editor-container">
+        <div class="editor-header">
+            <h3>NEPConnect Code Editor</h3>
+            <select class="language-selector" id="languageSelect">
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="java">Java</option>
+                <option value="cpp">C++</option>
+                <option value="c">C</option>
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+            </select>
+        </div>
+        
+        <div class="editor-toolbar">
+            <button class="editor-btn run" id="runBtn">Run Code</button>
+            <button class="editor-btn" id="saveBtn">Save</button>
+            <button class="editor-btn" id="loadBtn">Load</button>
+            <button class="editor-btn clear" id="clearBtn">Clear</button>
+        </div>
+        
+        <textarea id="codeEditor" placeholder="Write your code here..."></textarea>
+        
+        <div class="output-container">
+            <div class="output-header">
+                <span>Output</span>
+                <button class="editor-btn" id="clearOutputBtn">Clear Output</button>
+            </div>
+            <div id="output"></div>
+        </div>
+    </div>
+    
+    <div class="lesson-section">
+        <h3 class="lesson-title">Coding Lesson: Getting Started</h3>
+        <p>Welcome to coding with NEPConnect! Here you can practice programming in multiple languages.</p>
+        
+        <h4>Try these examples:</h4>
+        
+        <div class="example-code" id="pythonExample">
+            <p># Python - Hello World</p>
+            <p>print("Hello, NEPConnect!")</p>
+            <p>print(2 + 3 * 5)</p>
+        </div>
+        
+        <div class="example-code" id="javascriptExample" style="display:none">
+            <p>// JavaScript - Hello World</p>
+            <p>console.log("Hello, NEPConnect!");</p>
+            <p>console.log(2 + 3 * 5);</p>
+        </div>
+        
+        <div class="example-code" id="javaExample" style="display:none">
+            <p>// Java - Hello World</p>
+            <p>public class Main {</p>
+            <p>    public static void main(String[] args) {</p>
+            <p>        System.out.println("Hello, NEPConnect!");</p>
+            <p>        System.out.println(2 + 3 * 5);</p>
+            <p>    }</p>
+            <p>}</p>
+        </div>
+        
+        <div class="example-code" id="cppExample" style="display:none">
+            <p>// C++ - Hello World</p>
+            <p>#include &lt;iostream&gt;</p>
+            <p>using namespace std;</p>
+            <p>int main() {</p>
+            <p>    cout << "Hello, NEPConnect!" << endl;</p>
+            <p>    cout << 2 + 3 * 5 << endl;</p>
+            <p>    return 0;</p>
+            <p>}</p>
+        </div>
+        
+        <div class="example-code" id="cExample" style="display:none">
+            <p>// C - Hello World</p>
+            <p>#include &lt;stdio.h&gt;</p>
+            <p>int main() {</p>
+            <p>    printf("Hello, NEPConnect!\n");</p>
+            <p>    printf("%d\n", 2 + 3 * 5);</p>
+            <p>    return 0;</p>
+            <p>}</p>
+        </div>
+        
+        <div class="example-code" id="htmlExample" style="display:none">
+            <p>&lt;!-- HTML Example --&gt;</p>
+            <p>&lt;!DOCTYPE html&gt;</p>
+            <p>&lt;html&gt;</p>
+            <p>&lt;head&gt;</p>
+            <p>    &lt;title&gt;NEPConnect Page&lt;/title&gt;</p>
+            <p>&lt;/head&gt;</p>
+            <p>&lt;body&gt;</p>
+            <p>    &lt;h1&gt;Hello, NEPConnect!&lt;/h1&gt;</p>
+            <p>    &lt;p&gt;2 + 3 * 5 = &lt;span id="result"&gt;&lt;/span&gt;&lt;/p&gt;</p>
+            <p>    &lt;script&gt;</p>
+            <p>        document.getElementById("result").innerHTML = 2 + 3 * 5;</p>
+            <p>    &lt;/script&gt;</p>
+            <p>&lt;/body&gt;</p>
+            <p>&lt;/html&gt;</p>
+        </div>
+        
+        <div class="example-code" id="cssExample" style="display:none">
+            <p>/* CSS Example */</p>
+            <p>body {</p>
+            <p>    background-color: #f0f0f0;</p>
+            <p>    font-family: Arial, sans-serif;</p>
+            <p>}</p>
+            <p>h1 {</p>
+            <p>    color: #2c3e50;</p>
+            <p>    text-align: center;</p>
+            <p>}</p>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize the editor
+        document.addEventListener('DOMContentLoaded', function() {
+            const codeEditor = document.getElementById('codeEditor');
+            const output = document.getElementById('output');
+            const languageSelect = document.getElementById('languageSelect');
+            const runBtn = document.getElementById('runBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const loadBtn = document.getElementById('loadBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const clearOutputBtn = document.getElementById('clearOutputBtn');
+            
+            // Set default code based on selected language
+            function setDefaultCode() {
+                const language = languageSelect.value;
+                
+                // Hide all examples
+                document.querySelectorAll('.example-code').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                // Show current language example
+                document.getElementById(language + 'Example').style.display = 'block';
+                
+                // Set default code in editor
+                switch(language) {
+                    case 'python':
+                        codeEditor.value = '# Python - Hello World\nprint("Hello, NEPConnect!")\nprint(2 + 3 * 5)';
+                        break;
+                    case 'javascript':
+                        codeEditor.value = '// JavaScript - Hello World\nconsole.log("Hello, NEPConnect!");\nconsole.log(2 + 3 * 5);';
+                        break;
+                    case 'java':
+                        codeEditor.value = '// Java - Hello World\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, NEPConnect!");\n        System.out.println(2 + 3 * 5);\n    }\n}';
+                        break;
+                    case 'cpp':
+                        codeEditor.value = '// C++ - Hello World\n#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, NEPConnect!" << endl;\n    cout << 2 + 3 * 5 << endl;\n    return 0;\n}';
+                        break;
+                    case 'c':
+                        codeEditor.value = '// C - Hello World\n#include <stdio.h>\n\nint main() {\n    printf("Hello, NEPConnect!\\n");\n    printf("%d\\n", 2 + 3 * 5);\n    return 0;\n}';
+                        break;
+                    case 'html':
+                        codeEditor.value = '<!DOCTYPE html>\n<html>\n<head>\n    <title>NEPConnect Page</title>\n</head>\n<body>\n    <h1>Hello, NEPConnect!</h1>\n    <p>2 + 3 * 5 = <span id="result"></span></p>\n    <script>\n        document.getElementById("result").innerHTML = 2 + 3 * 5;\n    </script>\n</body>\n</html>';
+                        break;
+                    case 'css':
+                        codeEditor.value = '/* CSS Example */\nbody {\n    background-color: #f0f0f0;\n    font-family: Arial, sans-serif;\n}\n\nh1 {\n    color: #2c3e50;\n    text-align: center;\n}';
+                        break;
+                }
+            }
+            
+            // Language change handler
+            languageSelect.addEventListener('change', setDefaultCode);
+            
+            // Run button handler
+            runBtn.addEventListener('click', function() {
+                const code = codeEditor.value;
+                const language = languageSelect.value;
+                
+                output.innerHTML = '<span class="loading">Executing code...</span>';
+                
+                // Simulate execution (in a real app, you'd connect to a compiler API)
+                setTimeout(() => {
+                    try {
+                        let result = '';
+                        
+                        switch(language) {
+                            case 'python':
+                                result = 'Hello, NEPConnect!\n17';
+                                break;
+                            case 'javascript':
+                                result = 'Hello, NEPConnect!\n17';
+                                break;
+                            case 'java':
+                                result = 'Hello, NEPConnect!\n17';
+                                break;
+                            case 'cpp':
+                                result = 'Hello, NEPConnect!\n17';
+                                break;
+                            case 'c':
+                                result = 'Hello, NEPConnect!\n17';
+                                break;
+                            case 'html':
+                                result = 'HTML rendered successfully (would display in browser)';
+                                break;
+                            case 'css':
+                                result = 'CSS applied successfully (would style HTML elements)';
+                                break;
+                        }
+                        
+                        output.innerHTML = `<span class="success">Execution successful!</span>\n\n${result}`;
+                    } catch (e) {
+                        output.innerHTML = `<span class="error">Error in execution:</span>\n${e.message}`;
+                    }
+                }, 1000);
+            });
+            
+            // Save button handler
+            saveBtn.addEventListener('click', function() {
+                const code = codeEditor.value;
+                const language = languageSelect.value;
+                const filename = `nepconnect_code.${language === 'html' ? 'html' : language === 'css' ? 'css' : language}`;
+                
+                // Create a blob and download link
+                const blob = new Blob([code], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                output.innerHTML = `<span class="success">Code saved as ${filename}</span>`;
+            });
+            
+            // Load button handler
+            loadBtn.addEventListener('click', function() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.py,.js,.java,.cpp,.c,.html,.css,.txt';
+                
+                input.onchange = e => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function() {
+                        codeEditor.value = reader.result;
+                        output.innerHTML = `<span class="success">File ${file.name} loaded successfully</span>`;
+                        
+                        // Try to detect language from file extension
+                        const ext = file.name.split('.').pop().toLowerCase();
+                        if (['py', 'js', 'java', 'cpp', 'c', 'html', 'css'].includes(ext)) {
+                            const langMap = {
+                                'py': 'python',
+                                'js': 'javascript',
+                                'java': 'java',
+                                'cpp': 'cpp',
+                                'c': 'c',
+                                'html': 'html',
+                                'css': 'css'
+                            };
+                            languageSelect.value = langMap[ext];
+                            setDefaultCode();
+                        }
+                    };
+                    
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            });
+            
+            // Clear buttons
+            clearBtn.addEventListener('click', function() {
+                codeEditor.value = '';
+                output.innerHTML = '<span class="success">Editor cleared</span>';
+            });
+            
+            clearOutputBtn.addEventListener('click', function() {
+                output.innerHTML = '';
+            });
+            
+            // Set initial code
+            setDefaultCode();
+        });
+    </script>
+</body>
+</html>
